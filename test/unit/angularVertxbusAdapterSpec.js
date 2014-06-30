@@ -561,20 +561,24 @@ describe('knalli.angular-vertxbus', function () {
 
   describe('after removing a registered handler via "unregisterHandler"', function () {
 
-    var vertxEventBusService;
+    var vertxEventBusService, $rootScope;
 
     beforeEach(module('knalli.angular-vertxbus', function (vertxEventBusProvider) {
         vertxEventBusProvider.useMessageBuffer(0);
       }));
 
-    beforeEach(inject(function (_vertxEventBusService_) {
+    beforeEach(inject(function (_vertxEventBusService_, _$rootScope_) {
       vertxEventBusService = _vertxEventBusService_;
+        $rootScope = _$rootScope_;
     }));
 
     it('should not be called', function (done) {
       var abcCalled, xyzCalled;
       setTimeout(function () {
         var abcHandler = function (message) {
+          $rootScope.$apply(function() {
+                $rootScope.$broadcast('event:bus', message.data);
+              });
           abcCalled = message;
         }, xyzHandler = function (message) {
           xyzCalled = message;
